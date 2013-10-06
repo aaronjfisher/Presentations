@@ -13,6 +13,9 @@ Abstract
 This talk will be an introduction to how adaptive trials work, and the basic theoretical framework behind them. We'll be glossing over the more complicated details, so if you know what a multivariate normal distribution is, and you know what a null distribution is, it should be a breeze.
 
 The specific application we'll be talking about is a trial design where we start by enrolling everyone, and then decide who to continue enrolling based on results from the currenlty enrolled patients. For example, if one subpopulation doesn't appear to be benefiting, we might stop enrollinging them towards the end of the trial. This summer I worked on a Shiny App with Harris Jaffee and Michael Rosenblum, which helps users explore trial designs with this kind of adaptive enrollment. If there's time, I'll show some of the app's bells & whistles.
+
+Slides are here:
+https://rawgithub.com/aaronjfisher/Presentations/master/2013/2013-10-17_EAGLE_Journal_Club_Aaron_Fisher/2013-10-17_EAGLE_Journal_Club_Aaron_Fisher.html
 -->
 
 Background/Context
@@ -73,8 +76,15 @@ right: 55%
 
 ***
 
-![plot of chunk unnamed-chunk-1](2013-10-17_EAGLE_Journal_Club_Aaron_Fisher-figure/unnamed-chunk-1.png) 
-
+```{r echo=FALSE}
+# library(RCurl)
+# library(devtools)
+# library(digest)
+# gitDir<-"https://raw.github.com/aaronjfisher/Adaptive_Shiny/master/eagle_gui/shinyApp/"
+# source_url(paste0(gitDir,"Adaptive_Group_Sequential_Design.R"))
+source('/Users/aaronfisher/Documents/JH/Michael - Shiny App /new_gui/EAGLE Repo/eagle_gui/shinyApp/Adaptive_Group_Sequential_Design.R')
+boundary_fixed_H01_plot()
+```
 
 
 Calibrating an Efficacy Boundary
@@ -102,8 +112,40 @@ left: 57%
 
 Are $Z_{1}$ and $Z_{2}$ correlated?
 
-![plot of chunk unnamed-chunk-2](2013-10-17_EAGLE_Journal_Club_Aaron_Fisher-figure/unnamed-chunk-2.png) 
+```{r echo=FALSE}
+library(RColorBrewer)
 
+N<-1500
+timePoints<-1:50
+t<-rep(timePoints,each=N/length(timePoints))
+q<-70
+qp<-50
+len<-runif(N,20,q)
+y<-rbinom(N,1,.2)
+
+n<-800 #n1=n2
+col<-rep('lightgray',N)
+brewCols<-c(brewer.pal(name='Dark2',5))
+for(i in 1:N){
+  if(i<=n){ #F,D,A
+		if(len[i]>qp) col[i]<-brewCols[1]
+		if(len[i]<=qp) col[i]<-brewCols[2]
+	}
+	if(i>n ){
+		if(len[i]>qp) col[i]<-brewCols[3]
+		if(len[i]<=qp) col[i]<-brewCols[5]
+	}
+}
+
+pchVec<-c('o','x')[y+1]
+
+#Make 1stnd Plot
+plot(t,len,col=col,lwd=1,pch=pchVec,main='Enrollment over time',xlab='Time (months)',ylab='Population',ylim=c(20,qp-4))
+abline(h=qp,lty=2)
+abline(h=q,lty=2)
+abline(v=t[n],lwd=3,col='blue',lty=2)
+abline(v=t[N],lwd=3,col='blue',lty=2)
+```
 ***
 - Yes they are! They're both dependent on stage 1 data.
 - If stages two stages are very close in time, their Z-stats will be more correlated.
@@ -145,8 +187,10 @@ Test Statistics in Adaptive Enrollment
 Illustration of decision rules
 ===
 
-![plot of chunk unnamed-chunk-3](2013-10-17_EAGLE_Journal_Club_Aaron_Fisher-figure/unnamed-chunk-3.png) 
-
+```{r echo=FALSE}
+last_stage_subpop_2_enrolled_adaptive_design<-5
+boundary_adapt_plot()
+```
 
 Efficacy Boundaries for an Adaptive Trial
 ===
@@ -166,8 +210,16 @@ incremental: true
 
 Are $Z_{A,1}$ and $Z_{C,1}$ correlated?
 
-![plot of chunk unnamed-chunk-4](2013-10-17_EAGLE_Journal_Club_Aaron_Fisher-figure/unnamed-chunk-4.png) 
+```{r echo=FALSE}
+#Make 2nd Plot
 
+plot(t,len,col=col,lwd=1,pch=pchVec,main='Enrollment over time',xlab='Time (months)',ylab='Subpopulations A & B',xlim=c(0,t[n]))
+abline(h=qp,lty=2)
+abline(h=q,lty=2)
+abline(v=t[n],lwd=3,col='blue',lty=2)
+abline(v=t[N],lwd=3,col='blue',lty=2)
+#dev.copy2pdf(file='tex notes/corZplot.pdf')
+```
 ***
 - Yup! They both use subpop $A$ data. 
 - The higher the proportion of people in $A$, the more correlated $Z_{A,1}$ and $Z_{C,1}$ are.
@@ -180,8 +232,16 @@ incremental: true
 
 Are $Z_{C,1}$ and $Z_{A,2}$ correlated?
 
-![plot of chunk unnamed-chunk-5](2013-10-17_EAGLE_Journal_Club_Aaron_Fisher-figure/unnamed-chunk-5.png) 
+```{r echo=FALSE}
+#Make 2nd Plot
 
+plot(t,len,col=col,lwd=1,pch=pchVec,main='Enrollment over time',xlab='Time (months)',ylab='Subpopulations A & B')
+abline(h=qp,lty=2)
+abline(h=q,lty=2)
+abline(v=t[n],lwd=3,col='blue',lty=2)
+abline(v=t[N],lwd=3,col='blue',lty=2)
+#dev.copy2pdf(file='tex notes/corZplot.pdf')
+```
 
 ***
 - Yes they are!

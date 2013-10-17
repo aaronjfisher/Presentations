@@ -10,12 +10,12 @@ A project with Harris Jaffee & Michael Rosenblum
 
 <!--
 Abstract
-This talk will be an introduction to how adaptive trials work, and the basic theoretical framework behind them. We'll be glossing over the more complicated details, so if you know what a multivariate normal distribution is, and you know what a null distribution is, it should be a breeze.
+This talk will be an introduction to how adaptive trials work, and the basic theoretical framework behind them. We'll be glossing over the more complicated details, so if you know what a multivariate normal distribution is, and you know what a null distribution is, then it should be a breeze.
 
-The specific application we'll be talking about is a trial design where we start by enrolling everyone, and then decide who to continue enrolling based on results from the currenlty enrolled patients. For example, if one subpopulation doesn't appear to be benefiting, we might stop enrollinging them towards the end of the trial. This summer I worked on a Shiny App with Harris Jaffee and Michael Rosenblum, which helps users explore trial designs with this kind of adaptive enrollment. If there's time, I'll show some of the app's bells & whistles.
+The specific application we'll be talking about is a trial design where we start by enrolling everyone, and then decide who to continue enrolling based on results from the currently enrolled patients. For example, if one subpopulation doesn't appear to be benefiting, we might stop enrolling them towards the end of the trial. This summer I worked on a Shiny App with Harris Jaffee and Michael Rosenblum, which helps users explore trial designs with this kind of adaptive enrollment. If there's time, I'll show some of the app's bells & whistles.
 
 Slides are here:
-https://rawgithub.com/aaronjfisher/Presentations/master/2013/2013-10-17_EAGLE_Journal_Club_Aaron_Fisher/2013-10-17_EAGLE_Journal_Club_Aaron_Fisher.html
+https://rawgithub.com/aaronjfisher/Presentations/master/2013/2013-10-17_EAGLE_Journal_Club_Aaron_Fisher/slides.html
 -->
 
 Background/Context
@@ -39,8 +39,8 @@ Interim Checks
 
 - One approach is to conduct a series of traditional trials, each testing in a different subpopulation.
 - Another approach is to start enrolling everyone, and use the data from initial patients to inform our decisions of who to keep enrolling as the trial continues.
-  - Generally, we fix a number of "stages" for the trial ($K$), and do a check at the end of each stage.
   - The length, enrollment can take a long time. We will have some measurements before we've enrolled all our patients.
+  - Generally, we fix a number of "stages" for the trial ($K$), and do a check at the end of each stage.
   
 
 
@@ -101,8 +101,10 @@ $$
 
 Calibrating Efficacy Boundary
 ===
-- To get the most efficient cutoffs for $Z_k$, we'd like to know the null multivariate distribution of $\{Z_1,Z_2,...Z_k\}$.
-- Will the test statistics from two different stages ($Z_k$ and $Z_{k'}$) be correlated? (see plot on next slide).
+incremental: true
+
+- One simple way is to simulate the trial a bunch of times with different boundaries, pick the boundary (for the $Z$-stats) that gives us the type I error rate we want.
+- We can calculate this boundaries more efficiently though if we derive the null multivariate distribution of $\{Z_1,Z_2,...Z_k\}$.
 
 
 2 - Stage Illustration of data in Z-stats
@@ -195,7 +197,7 @@ boundary_adapt_plot()
 Efficacy Boundaries for an Adaptive Trial
 ===
 - We've got two boundaries, $c_AB_A(k)$ and $c_CB_C(k)$.
-- Family-wise error rate is now
+- If we tested both hypotheses at each stage, our family-wise error rate would be
 
 $$
 P_{null}(Z_{A,k}>c_AB_A(k)\text{ or } Z_{C,k}>c_CB_C(k) \text{,   for any } k≤K )
@@ -248,12 +250,31 @@ abline(v=t[N],lwd=3,col='blue',lty=2)
 - They both use stage 1 data from subpop $A$.
 
 
-Before we look at the app, any questions?
+Any questions?
 ===
+incremental: true
 
-OK! I'm ready to design an adaptive trial
+Anyone see where we glossed over more details?
+- We said "under the null," but with multiple subpopulations, it's not immediately clear what that means. 
+- It gets more complicated when the proportion of people in each subpopulation aren't known.
+
+More detailed explanations
 ===
+left:80%
+transition: none
 
-<a href="http://spark.rstudio.com/mrosenblum/eagle_gui_demo/" target="_blank">Let's do this</a>
+![alt text](up-doug-talking-dog-focus-meme.jpg)
+***
+
+More detailed explanations
+===
+left:80%
+transition: none
+
+![alt text](up_squirrel-meme.jpg)
+
+***
+
+<a href="http://spark.rstudio.com/mrosenblum/eagle_gui_demo/" target="_blank">Look over here!</a>
 
 
